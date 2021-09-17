@@ -1,16 +1,24 @@
 <template>
-  <section class="sec">
-    <div class="container">
-      <SearchBar @search="handleSearch" />
+  <div class="AppView">
+    <header class="AppView__header">
+      <img 
+        class="header--logo" 
+        src="@/assets/logo.png"
+      />
+      <div class="header--search" >
+        <SearchBar @search="handleSearch" />
+      </div>
+    </header>
+    <section class="AppView__container">
       <CharactersList :search-options="searchOptions" />
-    </div>
-  </section>
+    </section>
+  </div>
 </template>
 
 <script lang="ts">
 import { defineComponent, reactive } from 'vue';
-import SearchBar from './components/SearchBar.vue';
-import CharactersList from './components/CharactersList.vue';
+import SearchBar from './components/TheHeader/SearchBar.vue';
+import CharactersList from './components/Character/CharactersList.vue';
 
 export default defineComponent({
   name: 'App',
@@ -43,8 +51,29 @@ export default defineComponent({
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
+  margin-top: 10px;
 }
+
+.AppView {
+  width: 100%;
+  height: 100%;
+}
+
+.AppView__header {
+  align-items: center;
+  padding: 10px;
+  width: 100%;
+  display: flex;
+  height: 100px;
+}
+
+.header--logo {
+  height: 100px
+}
+
+.header--search {
+  margin-left: 50px;
+}
+
 </style>
