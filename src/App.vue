@@ -31,7 +31,6 @@ export default defineComponent({
   setup() {
     const searchOptions = ref<Filter>();
     const handleSearch = (filters: Filter) => {
-      console.log(filters);
       searchOptions.value = filters
     };
     

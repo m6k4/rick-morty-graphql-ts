@@ -9,7 +9,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, toRefs, PropType } from "vue";
+import { defineComponent, toRefs, PropType, watch } from "vue";
 import { useQuery, useResult } from "@vue/apollo-composable";
 import { GET_CHARACTERS_QUERY, GET_CHARACTERS_BY_IDS_QUERY } from "../../graphql/getCharacters";
 import CharacterListItem from './CharactersListItem.vue';
@@ -31,8 +31,17 @@ export default defineComponent({
   setup(props: { searchOptions: Filter }) {
 
     const { searchOptions } = toRefs(props);
-    
-    const { result, loading, error } = useQuery(GET_CHARACTERS_QUERY, {
+     console.log(searchOptions.value, 'PIERWSZY23')
+    watch(searchOptions, (currentValue, oldValue) => {
+      console.log(searchOptions.value, 'kolejny')
+      // searchOptions.value = currentValue;
+      refetch({
+        page: 1,
+        filter: searchOptions.value
+      });
+    });
+
+    const { result, loading, error, refetch } = useQuery(GET_CHARACTERS_QUERY, {
         page: 1,
         filter: searchOptions.value
     });
@@ -50,7 +59,8 @@ export default defineComponent({
     return {
       loading,
       error,
-      characters
+      characters,
+      refetch
     };
   }
 });
