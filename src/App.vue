@@ -16,9 +16,10 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive } from 'vue';
+import { defineComponent, ref } from 'vue';
 import SearchBar from './components/TheHeader/SearchBar.vue';
 import CharactersList from './components/Character/CharactersList.vue';
+import { Filter } from './types/types';
 
 export default defineComponent({
   name: 'App',
@@ -28,19 +29,15 @@ export default defineComponent({
   },
   // called once automaticly when the component is created
   setup() {
-
-    const searchOptions = reactive ({
-      query: "",
-      limit: 10
-    });
-
-    const handleSearch = (query: string) => {
-      searchOptions.query = query;
+    const searchOptions = ref<Filter>();
+    const handleSearch = (filters: Filter) => {
+      console.log(filters);
+      searchOptions.value = filters
     };
     
     return {
-      handleSearch,
       searchOptions,
+      handleSearch,
     }
   }
 });

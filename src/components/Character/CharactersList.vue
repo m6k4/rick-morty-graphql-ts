@@ -1,5 +1,6 @@
 <template>
   <div>
+    <div v-if="loading">Loading...</div>
     <CharacterListItem v-for="character in characters"
       :key="character.id"
       :character="character"
@@ -8,10 +9,11 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import { defineComponent, toRefs, PropType } from "vue";
 import { useQuery, useResult } from "@vue/apollo-composable";
-import { GET_CHARACTERS_QUERY } from "../../graphql/getCharacters";
+import { GET_CHARACTERS_QUERY, GET_CHARACTERS_BY_IDS_QUERY } from "../../graphql/getCharacters";
 import CharacterListItem from './CharactersListItem.vue';
+import { Filter } from '../../types/types';
 
 export default defineComponent({
   name: "CharactersList",
@@ -20,20 +22,24 @@ export default defineComponent({
   },
   props: {
     searchOptions: {
-      type: Object,
+      type: Object as PropType<Filter>,
       default() {
-        return { query: "", limit: 10 };
+        return {};
       }
     }
   },
-  setup(props: { searchOptions: Record<string, any> }) {
+  setup(props: { searchOptions: Filter }) {
 
+    const { searchOptions } = toRefs(props);
+    
     const { result, loading, error } = useQuery(GET_CHARACTERS_QUERY, {
-      variables: { 
         page: 1,
-        filter: { name: 'Rick'}
-      }
+        filter: searchOptions.value
     });
+
+    // const { result, loading, error } = useQuery(GET_CHARACTERS_BY_IDS_QUERY, {
+    //     ids: [1],
+    // });
     
     const characters = useResult(
       result,
