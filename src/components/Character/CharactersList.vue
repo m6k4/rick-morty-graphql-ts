@@ -1,8 +1,8 @@
 <template>
   <div>
-    <div v-if="loading">Loading...</div>
+    <div v-if="loading">Loading...</div> {{ info }}
     <CharacterListItem v-for="character in characters"
-      :key="character.id"
+      :key="character.getId()"
       :character="character"
     />
   </div>
@@ -14,6 +14,9 @@ import { useQuery, useResult } from "@vue/apollo-composable";
 import { GET_CHARACTERS_QUERY, GET_CHARACTERS_BY_IDS_QUERY, GET_EPISODES_QUERY } from "../../graphql/getCharacters";
 import CharacterListItem from './CharactersListItem.vue';
 import { Filter } from '../../types/types';
+import { GetCharactersResponseDTO } from '../../graphql/GetCharactersResponseDTO';
+import { Character } from "./Character";
+import { Info } from "./Info";
 
 export default defineComponent({
   name: "CharactersList",
@@ -55,7 +58,7 @@ export default defineComponent({
       });
     });
 
-    const { result, loading, error, refetch } = useQuery(queryName, {
+    const { result, loading, error, refetch } = useQuery<GetCharactersResponseDTO>(queryName, {
         page: 1,
         filter: searchOptions.value
     });
@@ -63,14 +66,21 @@ export default defineComponent({
     const characters = useResult(
       result,
       [],
-      data => data?.characters?.results
+      data => data?.characters?.results.map(dto => Character.fromDTO(dto))
     );
+
+    const info = useResult(
+      result,
+      [],
+      data => Info.fromDTO(data?.characters?.info!)
+    )
 
     return {
       loading,
       error,
       characters,
-      refetch
+      info,
+      refetch,
     };
   }
 });

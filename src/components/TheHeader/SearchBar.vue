@@ -1,10 +1,10 @@
 <template>
    SearchBar
    <select v-model="searchedType">
-    <option v-for="(type, index) in filterTypes" 
-      :key="index"
+    <option v-for="filter in filterTypes" 
+      :key="filter.type"
     >
-    {{type}}
+    {{filter.label}}
     </option>
   </select>
   <input
@@ -24,13 +24,28 @@ export default defineComponent({
   // called once automaticly when the component is created
   setup(props, context) {
 
-    const filterTypes = [
-      'name', 'id', 'episode'
+    const filterTypes = [ 
+      {
+        'name': 'name',
+        'label': 'name',
+        'type': 'character'
+      },
+       {
+        'name': 'id',
+        'label': 'identifier',
+        'type': 'id'
+      },
+       {
+        'name': 'name',
+        'label': 'episode',
+        'type': 'episode'
+      }
     ]
     const searchedType = ref<string>('name');
     const searchedValue = ref<string>('');
 
     const handleSearch = () => {
+       console.log(searchedType.value);
         context.emit('search', {
           [searchedType.value]: searchedValue.value,
         })

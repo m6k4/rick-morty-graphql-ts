@@ -1,29 +1,30 @@
 <template>
   <div>
-     <img :src="character.image" />
-      {{character.id}} 
-      {{character.name}} 
-      {{character.gender}} 
-      {{character.species}} 
-      "{{character.episode[character.episode.length - 1].episode}}"
+     <img :src="character.getImageUrl()" />
+      {{character.getId()}} 
+      {{character.getName()}} 
+      {{character.getGender()}} 
+      {{character.getSpecies()}} 
+      "{{character.getLatestEpisode().getName()}}"
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent, toRefs } from "vue";
+import { Character } from "./Character";
 
 export default defineComponent({
   name: "CharactersListItem",
 
   props: {
     character: {
-      type: Object,
+      type: Character,
       default() {
         return {};
       }
     }
   },
-  setup(props: { character: any }) {
+  setup(props: { character: Character }) {
     const { character } = toRefs(props);
  
     return {
