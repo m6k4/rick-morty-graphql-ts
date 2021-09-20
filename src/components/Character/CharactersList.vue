@@ -9,9 +9,9 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, toRefs, PropType, watch } from "vue";
+import { defineComponent, toRefs, PropType, watch, ref } from "vue";
 import { useQuery, useResult } from "@vue/apollo-composable";
-import { GET_CHARACTERS_QUERY, GET_CHARACTERS_BY_IDS_QUERY } from "../../graphql/getCharacters";
+import { GET_CHARACTERS_QUERY, GET_CHARACTERS_BY_IDS_QUERY, GET_EPISODES_QUERY } from "../../graphql/getCharacters";
 import CharacterListItem from './CharactersListItem.vue';
 import { Filter } from '../../types/types';
 
@@ -31,24 +31,34 @@ export default defineComponent({
   setup(props: { searchOptions: Filter }) {
 
     const { searchOptions } = toRefs(props);
-     console.log(searchOptions.value, 'PIERWSZY23')
+    let queryName = GET_CHARACTERS_QUERY;
+    let filterParams = searchOptions.value;
     watch(searchOptions, (currentValue, oldValue) => {
-      console.log(searchOptions.value, 'kolejny')
-      // searchOptions.value = currentValue;
+
+      switch(Object.keys(searchOptions.value)[0]) {
+        case 'name':
+          queryName = GET_CHARACTERS_QUERY;
+          break;
+        case 'id':
+          queryName = GET_CHARACTERS_BY_IDS_QUERY;
+          break;
+        case 'episode':
+          queryName = GET_EPISODES_QUERY;
+          break;
+        default:
+          queryName = GET_CHARACTERS_QUERY;
+      }
+      queryName = GET_CHARACTERS_QUERY;
       refetch({
         page: 1,
         filter: searchOptions.value
       });
     });
 
-    const { result, loading, error, refetch } = useQuery(GET_CHARACTERS_QUERY, {
+    const { result, loading, error, refetch } = useQuery(queryName, {
         page: 1,
         filter: searchOptions.value
     });
-
-    // const { result, loading, error } = useQuery(GET_CHARACTERS_BY_IDS_QUERY, {
-    //     ids: [1],
-    // });
     
     const characters = useResult(
       result,

@@ -39,3 +39,29 @@ export const GET_CHARACTERS_BY_IDS_QUERY = gql`
   }
 }
 `
+
+export const GET_EPISODES_QUERY = gql`
+  query getEpisodes($page: Int!, $filter: FilterEpisode) {
+    episodes(page: $page, episode: $filter) {
+      results {
+        characters {
+          id
+          name
+          image
+          status
+          gender
+          species
+          episode {
+            name
+          }
+      }
+    }
+      info {
+        count
+        pages
+        next
+        prev
+      }
+  }
+}
+`
