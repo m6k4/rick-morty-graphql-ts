@@ -1,11 +1,12 @@
 {
   "compilerOptions": {
-    "target": "es5",
+    "target": "es6",
     "module": "esnext",
     "strict": true,
     "jsx": "preserve",
     "importHelpers": true,
     "noImplicitAny": false,
+    "strictNullChecks": false,
     "moduleResolution": "node",
     "skipLibCheck": true,
     "esModuleInterop": true,
