@@ -1,4 +1,4 @@
-import { CharacterDTO } from "@/graphql/CharacterDTO";
+import { CharacterDTO } from "@/graphql/DTO/CharacterDTO";
 import { Episode } from "./Episode";
 
 export class Character {

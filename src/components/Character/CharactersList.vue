@@ -14,7 +14,7 @@ import { useQuery, useResult } from "@vue/apollo-composable";
 import { GET_CHARACTERS_QUERY, GET_CHARACTERS_BY_IDS_QUERY, GET_EPISODES_QUERY } from "../../graphql/getCharacters";
 import CharacterListItem from './CharactersListItem.vue';
 import { Filter } from '../../types/types';
-import { GetCharactersResponseDTO } from '../../graphql/GetCharactersResponseDTO';
+import { GetCharactersResponseDTO } from '../../graphql/DTO/GetCharactersResponseDTO';
 import { Character } from "./Character";
 import { Info } from "./Info";
 
@@ -34,29 +34,29 @@ export default defineComponent({
   setup(props: { searchOptions: Filter }) {
 
     const { searchOptions } = toRefs(props);
-    let queryName = GET_CHARACTERS_QUERY;
+    let queryName = GET_CHARACTERS_BY_IDS_QUERY;
     let filterParams = searchOptions.value;
-    watch(searchOptions, (currentValue, oldValue) => {
+    // watch(searchOptions, (currentValue, oldValue) => {
 
-      switch(Object.keys(searchOptions.value)[0]) {
-        case 'name':
-          queryName = GET_CHARACTERS_QUERY;
-          break;
-        case 'id':
-          queryName = GET_CHARACTERS_BY_IDS_QUERY;
-          break;
-        case 'episode':
-          queryName = GET_EPISODES_QUERY;
-          break;
-        default:
-          queryName = GET_CHARACTERS_QUERY;
-      }
-      queryName = GET_CHARACTERS_QUERY;
-      refetch({
-        page: 1,
-        filter: searchOptions.value
-      });
-    });
+    //   switch(Object.keys(searchOptions.value)[0]) {
+    //     case 'name':
+    //       queryName = GET_CHARACTERS_QUERY;
+    //       break;
+    //     case 'id':
+    //       queryName = GET_CHARACTERS_BY_IDS_QUERY;
+    //       break;
+    //     case 'episode':
+    //       queryName = GET_EPISODES_QUERY;
+    //       break;
+    //     default:
+    //       queryName = GET_CHARACTERS_QUERY;
+    //   }
+    //   queryName = GET_CHARACTERS_QUERY;
+    //   refetch({
+    //     page: 1,
+    //     filter: searchOptions.value
+    //   });
+    // });
 
     const { result, loading, error, refetch } = useQuery<GetCharactersResponseDTO>(queryName, {
         page: 1,

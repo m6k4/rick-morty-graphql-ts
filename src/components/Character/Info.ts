@@ -1,4 +1,4 @@
-import { InfoDTO } from "@/graphql/InfoDTO";
+import { InfoDTO } from "@/graphql/DTO/InfoDTO";
 
 export class Info {
   constructor(
