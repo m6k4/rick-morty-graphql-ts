@@ -10,7 +10,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, toRefs } from "vue";
+import { defineComponent, ref } from "vue";
 import { Character } from "./Character";
 
 export default defineComponent({
@@ -19,13 +19,11 @@ export default defineComponent({
   props: {
     character: {
       type: Character,
-      default() {
-        return {};
-      }
+      default: {}
     }
   },
-  setup(props: { character: Character }) {
-    const { character } = toRefs(props);
+  setup(props) {
+    const character = ref(props.character);
  
     return {
       character,
