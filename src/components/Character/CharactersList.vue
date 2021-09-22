@@ -68,10 +68,10 @@ export default defineComponent({
     const searchOptions = ref(props.searchOptions); 
     const pageSize = 8;
     const loadingAll = ref(false);
-    const favouritesIds = ref(["1", "2", "3", "4", "5", "6", "7", "19", "22", "23", "34", "45"]);
+    const favouritesIds = ref([1, 2, 3, 4, 6, 8, 11, 44, 16, 55, 34, 64, 21, 23, 24]);
     const currentPageCharactersList = ref<Array<Character>>([]);
     const currentPageFavouritesCharactersList = ref<Array<Character>>([]);
-    
+
     // INFO
     const { result: infoResult, onResult: infoOnResult } = useQuery<GetInfoResponseDTO>(GET_INFO_QUERY);
 
@@ -110,7 +110,7 @@ export default defineComponent({
     onResult(result => {
       if(allCharacters.value.length > 0) {
         charactersFav.value = allCharacters.value.filter((character) => 
-          favouritesIds.value.includes((character.id))
+          favouritesIds.value.includes((parseInt(character.id)))
         );
         console.log(charactersFav.value, 'przefiltrowane przez id')
         handleChangePageForFavourites(1);
