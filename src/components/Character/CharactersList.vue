@@ -1,27 +1,47 @@
 <template>
   <div class="CharactersList">
      <img 
-        v-if="loading"
+        v-if="loadingAll"
         class="loading-logo" 
         src="@/assets/rick-head.png"
-      /> {{ loading }}
-    <CharacterListItem v-for="character in currentPageCharactersList"
-      :key="character.getId()"
-      :character="character"
-    />
-    <ThePagination 
+      />
+    <el-tabs v-model="activeName">
+      <el-tab-pane label="All characters" name="all">
+        <CharacterListItem v-for="character in currentPageCharactersList"
+          :key="character.getId()"
+          :character="character"
+        />
+        <el-pagination background layout="prev, pager, next" 
+          :total="allCharacters.length"
+          :page-size="pageSize"
+          @current-change="handleChangePage"
+        />
+      </el-tab-pane>
+      <el-tab-pane label="Favourites" name="favourites">
+        <CharacterListItem v-for="character in currentPageFavouritesCharactersList"
+          :key="character.getId()"
+          :character="character"
+        />
+        <el-pagination background layout="prev, pager, next" 
+          :total="charactersFav.length"
+          :page-size="pageSize"
+          @current-change="handleChangePageForFavourites"
+        />
+      </el-tab-pane>
+    </el-tabs> 
+    <!-- <ThePagination 
       :count="671" 
       :page-size="pageSize"
       :page-count="34"
       @changePage="handleChangePage"
-    />
+    /> -->
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, toRefs, PropType, watch, ref, computed, reactive } from "vue";
+import { defineComponent, toRefs, PropType, watch, ref, computed, reactive, Ref } from "vue";
 import { useQuery, useResult } from "@vue/apollo-composable";
-import { GET_CHARACTERS_QUERY, GET_CHARACTERS_BY_IDS_QUERY, GET_EPISODES_QUERY } from "../../graphql/getCharacters";
+import { GET_CHARACTERS_QUERY, GET_CHARACTERS_BY_IDS_QUERY, GET_INFO_QUERY } from "../../graphql/getCharacters";
 import { Filter } from '../../types/types';
 import { GetCharactersByIdsResponseDTO } from '../../graphql/DTO/GetCharactersByIdsResponseDTO';
 import { GetCharactersResponseDTO } from '../../graphql/DTO/GetCharactersResponseDTO';
@@ -29,6 +49,7 @@ import { Character } from "./Character";
 import { Info } from "./Info";
 import CharacterListItem from './CharactersListItem.vue';
 import ThePagination from '../Common/ThePagination.vue';
+import { GetInfoResponseDTO } from "@/graphql/DTO/GetInfoResponseDTO";
 
 export default defineComponent({
   name: "CharactersList",
@@ -43,76 +64,81 @@ export default defineComponent({
     }
   },
   setup(props) {
+    const activeName = ref('all');
     const searchOptions = ref(props.searchOptions); 
-    // const currentPage = ref(1);
     const pageSize = 8;
+    const loadingAll = ref(false);
+    const favouritesIds = ref(["1", "2", "3", "4", "5", "6", "7", "19", "22", "23", "34", "45"]);
     const currentPageCharactersList = ref<Array<Character>>([]);
-    // let queryName = GET_CHARACTERS_BY_IDS_QUERY;
-    // let filterParams = searchOptions.value;
+    const currentPageFavouritesCharactersList = ref<Array<Character>>([]);
+    
+    // INFO
+    const { result: infoResult, onResult: infoOnResult } = useQuery<GetInfoResponseDTO>(GET_INFO_QUERY);
 
-    const { result: firstPageResult, loading: firstPageLoading } = useQuery<GetCharactersResponseDTO>(GET_CHARACTERS_QUERY, {
-      page: 1,
-      filter: {},
-    });
-
-    let characters = useResult<GetCharactersResponseDTO, Array<Character>, Array<Character>>(
-      firstPageResult,
+    const info = useResult(
+      infoResult,
       [],
-      data => data?.characters.results.map(dto => Character.fromDTO(dto))
-    )
-    const count = useResult(
-      firstPageResult,
-      [],
-      data => data?.characters?.info?.count!
-    )
+      data => Info.fromDTO(data?.characters?.info)
+    );
 
-    // const pages = useResult(
-    //   firstPageResult,
-    //   [],
-    //   data => data?.characters?.info?.pages!
-    // )
-    watch(count, (currentValue, oldValue) => {
-      let newCount: any = currentValue;
-      const arrayOfAllIds: number[] = Array.from(Array(newCount+1).keys()).slice(1)
+    infoOnResult(infoResult => {
+      loadingAll.value = true
+      let { count }: any = info.value;
+      const arrayOfAllIds: number[] = Array.from(Array(count+1).keys()).slice(1)
       refetch({
         ids: arrayOfAllIds,
-      }).then(() =>
-        handleChangePage({ page: 1 })
+      }).then(() => {
+        loadingAll.value = false
+        handleChangePage(1)
+      }
       )
     })
-
-    const { result, loading, error, refetch } = useQuery<GetCharactersByIdsResponseDTO>(GET_CHARACTERS_BY_IDS_QUERY, {
-      ids: [1, 2, 3, 4, 5, 6, 7, 8],
+  
+    // CHARACTERS BY ID
+    const { result, loading, error, onResult, networkStatus, refetch } = useQuery<GetCharactersByIdsResponseDTO>(GET_CHARACTERS_BY_IDS_QUERY, {
+      ids: [],
     });
-
-    characters = useResult(
+    
+    const allCharacters = useResult(
       result,
       [],
       data => data?.charactersByIds.map(dto => Character.fromDTO(dto))
     );
 
-    // currentPageCharactersList.value = [...characters.value];
-  
-    const handleChangePage = (({ page }) => {
-      console.log(page, 'page')
-      const firstIndex = (page - 1) * pageSize;
-      currentPageCharactersList.value = characters.value.slice(firstIndex, firstIndex + pageSize);
+    let charactersFav = ref<Array<Character>>([]);
+
+    onResult(result => {
+      if(allCharacters.value.length > 0) {
+        charactersFav.value = allCharacters.value.filter((character) => 
+          favouritesIds.value.includes((character.id))
+        );
+        console.log(charactersFav.value, 'przefiltrowane przez id')
+        handleChangePageForFavourites(1);
+      }
     })
 
-    // const currentPageCharactersList = computed (() => {
-    //   const firstIndex = (currentPage.value - 1) * pageSize;
-    //   return characters.value?.slice(firstIndex, firstIndex + pageSize);
-    // })
+    const handleChangePage = ((page) => {
+      const firstIndex = (page - 1) * pageSize;
+      currentPageCharactersList.value = allCharacters.value.slice(firstIndex, firstIndex + pageSize);
+    })
+    
+    const handleChangePageForFavourites = ((page) => {
+      const firstIndex = (page - 1) * pageSize;
+      currentPageFavouritesCharactersList.value = charactersFav.value.slice(firstIndex, firstIndex + pageSize);
+    })
 
     return {
-      loading,
+      loadingAll,
       error,
-      characters,
-      count,
+      allCharacters,
       pageSize,
       currentPageCharactersList,
-      refetch,
-      handleChangePage
+      currentPageFavouritesCharactersList,
+      charactersFav,
+      activeName,
+      networkStatus,
+      handleChangePage,
+      handleChangePageForFavourites
     };
   }
 });

@@ -30,10 +30,11 @@ export default defineComponent({
   // called once automaticly when the component is created
   setup() {
     const searchOptions = ref<Filter>();
+
     const handleSearch = (filters: Filter) => {
       searchOptions.value = filters
     };
-    
+
     return {
       searchOptions,
       handleSearch,

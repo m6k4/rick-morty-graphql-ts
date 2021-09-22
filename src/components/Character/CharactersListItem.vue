@@ -35,7 +35,7 @@ export default defineComponent({
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 img {
-  height: 100px;
-  width: 100px;
+  height: 70px;
+  width: 70px;
 }
 </style>

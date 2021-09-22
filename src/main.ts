@@ -7,6 +7,8 @@ import {
   HttpLink,
 } from "@apollo/client/core";
 import { ApolloClients } from "@vue/apollo-composable";
+import ElementPlus from 'element-plus';
+import 'element-plus/lib/theme-chalk/index.css';
 import App from "./App.vue";
 
 const additiveLink = from([
@@ -34,5 +36,7 @@ const app = createApp({
   },
   render: () => h(App),
 });
+
+app.use(ElementPlus);
 
 app.mount("#app");

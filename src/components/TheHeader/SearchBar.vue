@@ -45,7 +45,6 @@ export default defineComponent({
     const searchedValue = ref<string>('');
 
     const handleSearch = () => {
-       console.log(searchedType.value);
         context.emit('search', {
           [searchedType.value]: searchedValue.value,
         })

@@ -1,20 +1,19 @@
 <template>
   <div class="ThePagination">
     <div class="base-pagination">
-    <Button
+    <button
       :disabled="isPreviousButtonDisabled"
       @click="changePage(currentPage--)"
     >
       ←
-    </Button>
-    <Button
+    </button>
+    <button
       :disabled="isNextButtonDisabled"
       @click="changePage(++currentPage)"
     >
       →
-    </Button>
+    </button>
   </div>
-    {{ currentPage }}
   </div>
 </template>
 
