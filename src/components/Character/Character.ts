@@ -8,7 +8,8 @@ export class Character {
     private readonly gender: string,
     private readonly species: string,
     private readonly imageUrl: string,
-    private readonly episodes: Array<Episode>
+    private readonly episodes: Array<Episode>,
+    private readonly isFavourite: boolean = false,
   ) {}
 
   static fromDTO(dto: CharacterDTO): Character {
@@ -43,5 +44,7 @@ export class Character {
   getLatestEpisode(): Episode {
     return this.episodes[this.episodes.length - 1];
   }
-
+  getIsFavourite(): boolean {
+    return this.isFavourite;
+  }
 }

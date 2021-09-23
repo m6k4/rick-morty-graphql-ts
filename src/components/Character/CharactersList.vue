@@ -4,7 +4,8 @@
         v-if="loadingAll"
         class="loading-logo" 
         src="@/assets/rick-head.png"
-      />
+      /> 
+      {{favouritesStore.state}}
     <el-tabs v-model="activeName">
       <el-tab-pane label="All characters" name="all">
         <CharacterListItem v-for="character in currentPageListCharacters"
@@ -20,6 +21,7 @@
       <el-tab-pane label="Favourites" name="favourites">
         <CharacterListItem v-for="character in currentPageListFavouritesCharacters"
           :key="character.getId()"
+          :is-favourite="true"
           :character="character"
         />
         <el-pagination background layout="prev, pager, next" 
@@ -49,6 +51,7 @@ import { Info } from "./Info";
 import CharacterListItem from './CharactersListItem.vue';
 import ThePagination from '../Common/ThePagination.vue';
 import { GetInfoResponseDTO } from "@/graphql/DTO/GetInfoResponseDTO";
+import { favouritesStore } from './state/favouritesState';
 
 export default defineComponent({
   name: "CharactersList",
@@ -69,12 +72,20 @@ export default defineComponent({
     const currentPageAllCharacters: Ref<number> = ref(1);
     const currentPageFavouritesCharacters: Ref<number> = ref(1);
     const loadingAll = ref(false);
-    const favouritesIds = ref([1, 2, 3, 4, 6, 8, 11, 44, 16, 55, 34, 64, 21, 23, 24]);
-
     const filteredListLength: Ref<number> = computed (() => {
        if(filteredList.value) return filteredList.value.length
     });
-    const filteredList: any = computed (() => {
+    
+    let charactersFav = ref<Array<Character>>([]);
+
+     watch(favouritesStore.state.favouritesIdsList, (selection, prevSelection) => { 
+      allCharacters.value.forEach(character => {
+         character.isFavourite = selection.includes(character.id);
+       })
+      charactersFav.value = allCharacters.value.filter(character => character.isFavourite);
+    });
+
+    const filteredList: ComputedRef<Readonly<Character[]>> = computed (() => {
       if(!searchOptions.value.value) return allCharacters.value;
 
       if(allCharacters.value.length > 0 ) {
@@ -106,10 +117,8 @@ export default defineComponent({
     });
 
     const currentPageListFavouritesCharacters = computed (() => {
-       if(filteredList.value) {
-        const firstIndex = (currentPageFavouritesCharacters.value - 1) * pageSize;
-        return charactersFav.value.slice(firstIndex, firstIndex + pageSize);
-       }
+      const firstIndex = (currentPageFavouritesCharacters.value - 1) * pageSize;
+      return charactersFav.value.slice(firstIndex, firstIndex + pageSize);
     });
 
     // INFO
@@ -139,34 +148,28 @@ export default defineComponent({
       ids: [],
     })
     
-    const allCharacters = useResult(
+    let allCharacters = useResult(
       result,
       [],
       data => data?.charactersByIds.map(dto => Character.fromDTO(dto))
     );
 
-    let charactersFav = ref<Array<Character>>([]);
-
     //watch na all characters zamiast tego
-    onResult(result => {
-      if(allCharacters.value.length > 0) {
-        charactersFav.value = allCharacters.value.filter((character) => 
-          favouritesIds.value.includes((parseInt(character.id)))
-        );
-        handleChangePageForFavourites(1);
-      }
-    })
+    // onResult(result => {
+    //   if(allCharacters.value.length > 0) {
+    //     charactersFav.value = allCharacters.value.filter((character) => 
+    //       favouritesStore.state.favouritesIdsList.includes((parseInt(character.id)))
+    //     );
+    //     handleChangePageForFavourites(1);
+    //   }
+    // })
 
     const handleChangePage = ((page) => {
       currentPageAllCharacters.value = page;
-      // const firstIndex = (page - 1) * pageSize;
-      // currentPageListCharacters.value = filteredList.value.value.slice(firstIndex, firstIndex + pageSize);
     })
     
     const handleChangePageForFavourites = ((page) => {
       currentPageFavouritesCharacters.value = page;
-      // const firstIndex = (page - 1) * pageSize;
-      // currentPageListFavouritesCharacters.value = charactersFav.value.slice(firstIndex, firstIndex + pageSize);
     })
 
     return {
@@ -175,13 +178,12 @@ export default defineComponent({
       searchOptions,
       loadingAll,
       error,
-      allCharacters,
       pageSize,
       currentPageListCharacters,
       currentPageListFavouritesCharacters,
       charactersFav,
       activeName,
-      networkStatus,
+      favouritesStore,
       handleChangePage,
       handleChangePageForFavourites
     };
