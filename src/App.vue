@@ -16,7 +16,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue';
+import { defineComponent, ref, isRef, reactive } from 'vue';
 import SearchBar from './components/TheHeader/SearchBar.vue';
 import CharactersList from './components/Character/CharactersList.vue';
 import { Filter } from './types/types';
@@ -29,10 +29,15 @@ export default defineComponent({
   },
   // called once automaticly when the component is created
   setup() {
-    const searchOptions = ref<Filter>();
+    const searchOptions = reactive({
+      name: '',
+      value: ''
+    });
 
-    const handleSearch = (filters: Filter) => {
-      searchOptions.value = filters
+    // const searchOptions = ref({});
+    const handleSearch = (filters) => {
+      searchOptions.name = filters.name;
+      searchOptions.value = filters.value;
     };
 
     return {

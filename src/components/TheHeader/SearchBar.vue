@@ -36,7 +36,7 @@ export default defineComponent({
         'type': 'id'
       },
        {
-        'name': 'name',
+        'name': 'episode',
         'label': 'episode',
         'type': 'episode'
       }
@@ -46,7 +46,8 @@ export default defineComponent({
 
     const handleSearch = () => {
         context.emit('search', {
-          [searchedType.value]: searchedValue.value,
+          name: searchedType.value,
+          value: searchedValue.value,
         })
     }
     

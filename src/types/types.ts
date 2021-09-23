@@ -3,4 +3,4 @@ export enum AvailableFilters {
   ID = 'id',
   EPISODE = 'episode'
 }
-export type Filter = { [key in keyof typeof AvailableFilters]: string | number};
+export type Filter = Array<{[key in keyof typeof AvailableFilters]: string | number}>;

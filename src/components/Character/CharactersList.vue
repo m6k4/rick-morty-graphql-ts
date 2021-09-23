@@ -7,18 +7,18 @@
       />
     <el-tabs v-model="activeName">
       <el-tab-pane label="All characters" name="all">
-        <CharacterListItem v-for="character in currentPageCharactersList"
+        <CharacterListItem v-for="character in currentPageListCharacters"
           :key="character.getId()"
           :character="character"
         />
         <el-pagination background layout="prev, pager, next" 
-          :total="allCharacters.length"
+          :total="filteredListLength"
           :page-size="pageSize"
           @current-change="handleChangePage"
         />
       </el-tab-pane>
       <el-tab-pane label="Favourites" name="favourites">
-        <CharacterListItem v-for="character in currentPageFavouritesCharactersList"
+        <CharacterListItem v-for="character in currentPageListFavouritesCharacters"
           :key="character.getId()"
           :character="character"
         />
@@ -39,12 +39,11 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, toRefs, PropType, watch, ref, computed, reactive, Ref } from "vue";
+import { defineComponent, toRefs, PropType, watch, ref, readonly, computed, reactive, Ref, toRef, unref, WritableComputedRef, ComputedRef } from "vue";
 import { useQuery, useResult } from "@vue/apollo-composable";
-import { GET_CHARACTERS_QUERY, GET_CHARACTERS_BY_IDS_QUERY, GET_INFO_QUERY } from "../../graphql/getCharacters";
+import { GET_CHARACTERS_BY_IDS_QUERY, GET_INFO_QUERY } from "../../graphql/getCharacters";
 import { Filter } from '../../types/types';
 import { GetCharactersByIdsResponseDTO } from '../../graphql/DTO/GetCharactersByIdsResponseDTO';
-import { GetCharactersResponseDTO } from '../../graphql/DTO/GetCharactersResponseDTO';
 import { Character } from "./Character";
 import { Info } from "./Info";
 import CharacterListItem from './CharactersListItem.vue';
@@ -59,18 +58,59 @@ export default defineComponent({
   },
   props: {
     searchOptions: {
-      type: Object as PropType<Filter>,
+      type: Object,
       default: {}
     }
   },
   setup(props) {
     const activeName = ref('all');
-    const searchOptions = ref(props.searchOptions); 
+    const { searchOptions } = toRefs(props)
     const pageSize = 8;
+    const currentPageAllCharacters: Ref<number> = ref(1);
+    const currentPageFavouritesCharacters: Ref<number> = ref(1);
     const loadingAll = ref(false);
     const favouritesIds = ref([1, 2, 3, 4, 6, 8, 11, 44, 16, 55, 34, 64, 21, 23, 24]);
-    const currentPageCharactersList = ref<Array<Character>>([]);
-    const currentPageFavouritesCharactersList = ref<Array<Character>>([]);
+
+    const filteredListLength: Ref<number> = computed (() => {
+       if(filteredList.value) {
+        return filteredList.value.length;
+       }
+    });
+    const filteredList: any = computed (() => {
+          console.log(searchOptions.value.name);
+
+      if(allCharacters.value.length > 0 ) {
+        if(searchOptions.value.name === 'name') {
+          return allCharacters.value.filter((character) => 
+            character.name.toUpperCase().includes(searchOptions.value.value.toUpperCase()) 
+          )
+        }
+        if(searchOptions.value.name === 'identifier') {
+          return allCharacters.value.filter((character) =>
+            character.id === searchOptions.value.value
+          )
+        }
+        if(searchOptions.value.name === 'episode') {
+          
+        }
+        return allCharacters.value;
+      }
+    })
+
+    const currentPageListCharacters = computed (() => {
+      if(filteredList.value !== undefined) {
+        console.log(filteredList)
+        const firstIndex = (currentPageAllCharacters.value - 1) * pageSize;
+        return filteredList.value.slice(firstIndex, firstIndex + pageSize);
+      }
+    });
+
+    const currentPageListFavouritesCharacters = computed (() => {
+      if(filteredList.value !== undefined) {
+        const firstIndex = (currentPageFavouritesCharacters.value - 1) * pageSize;
+        return charactersFav.value.slice(firstIndex, firstIndex + pageSize);
+       }
+    });
 
     // INFO
     const { result: infoResult, onResult: infoOnResult } = useQuery<GetInfoResponseDTO>(GET_INFO_QUERY);
@@ -95,9 +135,9 @@ export default defineComponent({
     })
   
     // CHARACTERS BY ID
-    const { result, loading, error, onResult, networkStatus, refetch } = useQuery<GetCharactersByIdsResponseDTO>(GET_CHARACTERS_BY_IDS_QUERY, {
+    const { result, error, onResult, networkStatus, refetch } = useQuery<GetCharactersByIdsResponseDTO>(GET_CHARACTERS_BY_IDS_QUERY, {
       ids: [],
-    });
+    })
     
     const allCharacters = useResult(
       result,
@@ -107,33 +147,38 @@ export default defineComponent({
 
     let charactersFav = ref<Array<Character>>([]);
 
+    //watch na all characters zamiast tego
     onResult(result => {
       if(allCharacters.value.length > 0) {
         charactersFav.value = allCharacters.value.filter((character) => 
           favouritesIds.value.includes((parseInt(character.id)))
         );
-        console.log(charactersFav.value, 'przefiltrowane przez id')
         handleChangePageForFavourites(1);
       }
     })
 
     const handleChangePage = ((page) => {
-      const firstIndex = (page - 1) * pageSize;
-      currentPageCharactersList.value = allCharacters.value.slice(firstIndex, firstIndex + pageSize);
+      currentPageAllCharacters.value = page;
+      // const firstIndex = (page - 1) * pageSize;
+      // currentPageListCharacters.value = filteredList.value.value.slice(firstIndex, firstIndex + pageSize);
     })
     
     const handleChangePageForFavourites = ((page) => {
-      const firstIndex = (page - 1) * pageSize;
-      currentPageFavouritesCharactersList.value = charactersFav.value.slice(firstIndex, firstIndex + pageSize);
+      currentPageFavouritesCharacters.value = page;
+      // const firstIndex = (page - 1) * pageSize;
+      // currentPageListFavouritesCharacters.value = charactersFav.value.slice(firstIndex, firstIndex + pageSize);
     })
 
     return {
+      filteredListLength,
+      filteredList,
+      searchOptions,
       loadingAll,
       error,
       allCharacters,
       pageSize,
-      currentPageCharactersList,
-      currentPageFavouritesCharactersList,
+      currentPageListCharacters,
+      currentPageListFavouritesCharacters,
       charactersFav,
       activeName,
       networkStatus,
