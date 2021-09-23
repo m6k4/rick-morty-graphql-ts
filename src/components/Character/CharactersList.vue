@@ -72,12 +72,10 @@ export default defineComponent({
     const favouritesIds = ref([1, 2, 3, 4, 6, 8, 11, 44, 16, 55, 34, 64, 21, 23, 24]);
 
     const filteredListLength: Ref<number> = computed (() => {
-       if(filteredList.value) {
-        return filteredList.value.length;
-       }
+       if(filteredList.value) return filteredList.value.length
     });
     const filteredList: any = computed (() => {
-          console.log(searchOptions.value.name);
+      if(!searchOptions.value.value) return allCharacters.value;
 
       if(allCharacters.value.length > 0 ) {
         if(searchOptions.value.name === 'name') {
@@ -91,22 +89,24 @@ export default defineComponent({
           )
         }
         if(searchOptions.value.name === 'episode') {
-          
+            return allCharacters.value.filter((character) =>
+            character.episodes.some((epidose) =>
+              epidose.name === searchOptions.value.value.toUpperCase())
+          )
         }
         return allCharacters.value;
       }
     })
 
     const currentPageListCharacters = computed (() => {
-      if(filteredList.value !== undefined) {
-        console.log(filteredList)
+       if(filteredList.value) {
         const firstIndex = (currentPageAllCharacters.value - 1) * pageSize;
         return filteredList.value.slice(firstIndex, firstIndex + pageSize);
       }
     });
 
     const currentPageListFavouritesCharacters = computed (() => {
-      if(filteredList.value !== undefined) {
+       if(filteredList.value) {
         const firstIndex = (currentPageFavouritesCharacters.value - 1) * pageSize;
         return charactersFav.value.slice(firstIndex, firstIndex + pageSize);
        }
