@@ -1,23 +1,26 @@
 <template>
   <div class="CharactersList">
-     <img 
-        v-if="loadingAll"
-        class="loading-logo" 
-        src="@/assets/rick-head.png"
-      /> 
-    <el-tabs v-model="activeName">
-      <el-tab-pane label="All characters" name="all">
-        <CharacterTable :characters="filteredList"
-          @add-to-favourites="handleAddToFavourites"
-          @remove-from-favourites="handleRemoveFromFavourites"
-        />
-      </el-tab-pane>
-      <el-tab-pane label="Favourites" name="favourites">
-        <CharacterTable :characters="favouritesList"
-          @remove-from-favourites="handleRemoveFromFavourites"
-        />
-      </el-tab-pane>
-    </el-tabs> 
+    <TheLoading v-if="loadingAll"/>
+    <section 
+      v-else
+      class="CharactersList__content" 
+    >
+      <el-tabs v-model="activeName">
+        <el-tab-pane label="All characters" name="all">
+          <CharacterTable :characters="filteredList"
+            :isLoading="loadingAll"
+            @add-to-favourites="handleAddToFavourites"
+            @remove-from-favourites="handleRemoveFromFavourites"
+          />
+        </el-tab-pane>
+        <el-tab-pane label="Favourites" name="favourites">
+          <CharacterTable :characters="favouritesList"
+            :isLoading="loadingAll"
+            @remove-from-favourites="handleRemoveFromFavourites"
+          />
+        </el-tab-pane>
+      </el-tabs> 
+    </section>
   </div>
 </template>
 
@@ -33,11 +36,13 @@ import { GetInfoResponseDTO } from "@/graphql/DTO/GetInfoResponseDTO";
 import CharacterTable from './CharacterTable.vue';
 import { Episode } from "./Episode";
 import { favouritesStore } from './state/favouritesState';
+import TheLoading from '../Common/TheLoading.vue';
 
 export default defineComponent({
   name: "CharactersList",
   components: {
-    CharacterTable
+    CharacterTable,
+    TheLoading
   },
   props: {
     searchOptions: {
@@ -48,7 +53,7 @@ export default defineComponent({
   setup(props) {
     const activeName = ref('all');
     const { searchOptions } = toRefs(props)
-    const loadingAll = ref(false);
+    const loadingAll = ref(true);
     const allCharacters = ref<Array<Character>>([])
 
     const handleAddToFavourites = ((characterId: number) => {
@@ -149,25 +154,4 @@ export default defineComponent({
   height: 100vh;
 }
 
-.loading-logo {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  -ms-transform: translate(-50%, -50%);
-  transform: translate(-50%, -50%);
-  width: 100px;
-  animation-name: spin;
-  animation-duration: 5000ms;
-  animation-iteration-count: infinite;
-  animation-timing-function: linear;
-}
-
-@keyframes spin {
-    from {
-        transform:rotate(0deg);
-    }
-    to {
-        transform:rotate(360deg);
-    }
-}
 </style>
