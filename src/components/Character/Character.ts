@@ -9,7 +9,7 @@ export class Character {
     private readonly species: string,
     private readonly imageUrl: string,
     private readonly episodes: Array<Episode>,
-    private readonly isFavourite: boolean = false,
+    private isFavourite: boolean = false,
   ) {}
 
   static fromDTO(dto: CharacterDTO): Character {
@@ -46,5 +46,8 @@ export class Character {
   }
   getIsFavourite(): boolean {
     return this.isFavourite;
+  }
+  setIsFavourite(status: boolean): void {
+    this.isFavourite = status;
   }
 }

@@ -5,59 +5,39 @@
         class="loading-logo" 
         src="@/assets/rick-head.png"
       /> 
-      {{favouritesStore.state}}
     <el-tabs v-model="activeName">
       <el-tab-pane label="All characters" name="all">
-        <CharacterListItem v-for="character in currentPageListCharacters"
-          :key="character.getId()"
-          :character="character"
-        />
-        <el-pagination background layout="prev, pager, next" 
-          :total="filteredListLength"
-          :page-size="pageSize"
-          @current-change="handleChangePage"
+        <CharacterTable :characters="filteredList"
+          @add-to-favourites="handleAddToFavourites"
+          @remove-from-favourites="handleRemoveFromFavourites"
         />
       </el-tab-pane>
       <el-tab-pane label="Favourites" name="favourites">
-        <CharacterListItem v-for="character in currentPageListFavouritesCharacters"
-          :key="character.getId()"
-          :is-favourite="true"
-          :character="character"
-        />
-        <el-pagination background layout="prev, pager, next" 
-          :total="charactersFav.length"
-          :page-size="pageSize"
-          @current-change="handleChangePageForFavourites"
+        <CharacterTable :characters="favouritesList"
+          @remove-from-favourites="handleRemoveFromFavourites"
         />
       </el-tab-pane>
     </el-tabs> 
-    <!-- <ThePagination 
-      :count="671" 
-      :page-size="pageSize"
-      :page-count="34"
-      @changePage="handleChangePage"
-    /> -->
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, toRefs, PropType, watch, ref, readonly, computed, reactive, Ref, toRef, unref, WritableComputedRef, ComputedRef } from "vue";
+import { defineComponent, toRefs, ref, computed, ComputedRef } from "vue";
 import { useQuery, useResult } from "@vue/apollo-composable";
 import { GET_CHARACTERS_BY_IDS_QUERY, GET_INFO_QUERY } from "../../graphql/getCharacters";
 import { Filter } from '../../types/types';
 import { GetCharactersByIdsResponseDTO } from '../../graphql/DTO/GetCharactersByIdsResponseDTO';
 import { Character } from "./Character";
 import { Info } from "./Info";
-import CharacterListItem from './CharactersListItem.vue';
-import ThePagination from '../Common/ThePagination.vue';
 import { GetInfoResponseDTO } from "@/graphql/DTO/GetInfoResponseDTO";
+import CharacterTable from './CharacterTable.vue';
+import { Episode } from "./Episode";
 import { favouritesStore } from './state/favouritesState';
 
 export default defineComponent({
   name: "CharactersList",
   components: {
-    CharacterListItem,
-    ThePagination
+    CharacterTable
   },
   props: {
     searchOptions: {
@@ -68,58 +48,52 @@ export default defineComponent({
   setup(props) {
     const activeName = ref('all');
     const { searchOptions } = toRefs(props)
-    const pageSize = 8;
-    const currentPageAllCharacters: Ref<number> = ref(1);
-    const currentPageFavouritesCharacters: Ref<number> = ref(1);
     const loadingAll = ref(false);
-    const filteredListLength: Ref<number> = computed (() => {
-       if(filteredList.value) return filteredList.value.length
-    });
-    
-    let charactersFav = ref<Array<Character>>([]);
+    const allCharacters = ref<Array<Character>>([])
 
-     watch(favouritesStore.state.favouritesIdsList, (selection, prevSelection) => { 
+    const handleAddToFavourites = ((characterId: number) => {
+     console.log('add');
+     favouritesStore.addToFavourites(characterId);
       allCharacters.value.forEach(character => {
-         character.isFavourite = selection.includes(character.id);
+        character.getId() ===  characterId ?
+          character.setIsFavourite(true) : ''
        })
-      charactersFav.value = allCharacters.value.filter(character => character.isFavourite);
-    });
+    })
 
-    const filteredList: ComputedRef<Readonly<Character[]>> = computed (() => {
+    const handleRemoveFromFavourites =  ((characterId: number) => {
+      favouritesStore.removeFromFavourites(characterId);
+      allCharacters.value.forEach(character => {
+      character.getId() ===  characterId ?
+        character.setIsFavourite(false) : ''
+      })
+    })
+
+    const favouritesList = computed (() => {
+      return filteredList.value.filter(character => character.getIsFavourite())
+    })
+
+    const filteredList: ComputedRef<{ getId: () => number; getName: () => string; getGender: () => string; getSpecies: () => string; getImageUrl: () => string; getEpisode: () => Episode[]; getLatestEpisode: () => Episode; getIsFavourite: () => boolean; setIsFavourite: (status: boolean) => void; }[]> = computed (() => {
       if(!searchOptions.value.value) return allCharacters.value;
-
       if(allCharacters.value.length > 0 ) {
         if(searchOptions.value.name === 'name') {
           return allCharacters.value.filter((character) => 
-            character.name.toUpperCase().includes(searchOptions.value.value.toUpperCase()) 
+            character.getName().toUpperCase().includes(searchOptions.value.value.toUpperCase()) 
           )
         }
         if(searchOptions.value.name === 'identifier') {
           return allCharacters.value.filter((character) =>
-            character.id === searchOptions.value.value
+            character.getId() === searchOptions.value.value
           )
         }
         if(searchOptions.value.name === 'episode') {
             return allCharacters.value.filter((character) =>
-            character.episodes.some((epidose) =>
-              epidose.name === searchOptions.value.value.toUpperCase())
+            character.getEpisode().some((epidose) =>
+              epidose.getName() === searchOptions.value.value.toUpperCase())
           )
         }
         return allCharacters.value;
       }
     })
-
-    const currentPageListCharacters = computed (() => {
-       if(filteredList.value) {
-        const firstIndex = (currentPageAllCharacters.value - 1) * pageSize;
-        return filteredList.value.slice(firstIndex, firstIndex + pageSize);
-      }
-    });
-
-    const currentPageListFavouritesCharacters = computed (() => {
-      const firstIndex = (currentPageFavouritesCharacters.value - 1) * pageSize;
-      return charactersFav.value.slice(firstIndex, firstIndex + pageSize);
-    });
 
     // INFO
     const { result: infoResult, onResult: infoOnResult } = useQuery<GetInfoResponseDTO>(GET_INFO_QUERY);
@@ -138,54 +112,33 @@ export default defineComponent({
         ids: arrayOfAllIds,
       }).then(() => {
         loadingAll.value = false
-        handleChangePage(1)
       }
       )
     })
   
-    // CHARACTERS BY ID
+    // ALL CHARACTERS BY ID
     const { result, error, onResult, networkStatus, refetch } = useQuery<GetCharactersByIdsResponseDTO>(GET_CHARACTERS_BY_IDS_QUERY, {
       ids: [],
     })
     
-    let allCharacters = useResult(
+    useResult(
       result,
       [],
       data => data?.charactersByIds.map(dto => Character.fromDTO(dto))
     );
 
-    //watch na all characters zamiast tego
-    // onResult(result => {
-    //   if(allCharacters.value.length > 0) {
-    //     charactersFav.value = allCharacters.value.filter((character) => 
-    //       favouritesStore.state.favouritesIdsList.includes((parseInt(character.id)))
-    //     );
-    //     handleChangePageForFavourites(1);
-    //   }
-    // })
-
-    const handleChangePage = ((page) => {
-      currentPageAllCharacters.value = page;
+    onResult(result => {
+      allCharacters.value = result.data?.charactersByIds.map(dto => Character.fromDTO(dto))
     })
     
-    const handleChangePageForFavourites = ((page) => {
-      currentPageFavouritesCharacters.value = page;
-    })
-
     return {
-      filteredListLength,
+      favouritesList,
       filteredList,
-      searchOptions,
       loadingAll,
       error,
-      pageSize,
-      currentPageListCharacters,
-      currentPageListFavouritesCharacters,
-      charactersFav,
       activeName,
-      favouritesStore,
-      handleChangePage,
-      handleChangePageForFavourites
+      handleAddToFavourites,
+      handleRemoveFromFavourites
     };
   }
 });
