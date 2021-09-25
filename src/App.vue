@@ -1,14 +1,10 @@
 <template>
   <div class="AppView">
-    <header class="AppView__header">
-      <img 
-        class="header--logo" 
-        src="@/assets/logo.png"
-      />
-      <div class="header--search" >
+    <TheHeader>
+      <template #header-content>
         <SearchBar @search="handleSearch" />
-      </div>
-    </header>
+      </template>
+    </TheHeader>
     <section class="AppView__container">
       <CharactersList :search-options="searchOptions" />
     </section>
@@ -19,13 +15,14 @@
 import { defineComponent, ref, isRef, reactive } from 'vue';
 import SearchBar from './components/TheHeader/SearchBar.vue';
 import CharactersList from './components/Character/CharactersList.vue';
-import { Filter } from './types/types';
+import TheHeader from './components/Platform/TheHeader.vue';
 
 export default defineComponent({
   name: 'App',
   components: {
     SearchBar, 
     CharactersList,
+    TheHeader
   },
   // called once automaticly when the component is created
   setup() {
@@ -64,22 +61,6 @@ export default defineComponent({
 .AppView {
   width: 100%;
   height: 100%;
-}
-
-.AppView__header {
-  align-items: center;
-  padding: 10px;
-  width: 100%;
-  display: flex;
-  height: 100px;
-}
-
-.header--logo {
-  height: 100px
-}
-
-.header--search {
-  margin-left: 50px;
 }
 
 </style>

@@ -1,19 +1,29 @@
 <template>
-   SearchBar
-   <select v-model="searchedType">
-    <option v-for="filter in filterTypes" 
-      :key="filter.type"
-    >
-    {{filter.label}}
-    </option>
-  </select>
-  <input
-    :placeholder="`write ${searchedType}`"
-    v-model="searchedValue"
-  />
-  <button @click="handleSearch">
-    Search
-  </button>
+   <div class="SearchBar">
+     <div class="SearchBar__container">
+      <select 
+        class="SearchBar__container__select"
+        v-model="searchedType"
+      >
+        <option v-for="filter in filterTypes" 
+          :key="filter.type"
+        >
+        {{filter.label}}
+        </option>
+      </select>
+      <input
+        class="SearchBar__container__input"
+        :placeholder="`write ${searchedType}`"
+        v-model="searchedValue"
+      />
+      <button 
+        class="SearchBar__container__button"
+        @click="handleSearch"
+      >
+        Search
+      </button>
+     </div>
+  </div>
 </template>
 
 <script lang="ts">
@@ -63,4 +73,32 @@ export default defineComponent({
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+.SearchBar {
+  margin: 0;
+}
+
+.SearchBar__container {
+  height: 56px;
+  width: 505px;
+  border: 1px solid #A9B1BD;
+  border-radius: 4px;
+  position: relative;
+};
+
+.SearchBar__container__select {
+  all: unset !important;
+};
+
+.SearchBar__container__input {
+  background: blue;
+  all: unset !important;
+};
+
+.SearchBar__container__button {
+  all: unset !important;
+  width: 100px;
+  height: 100px;
+};
+
+
 </style>

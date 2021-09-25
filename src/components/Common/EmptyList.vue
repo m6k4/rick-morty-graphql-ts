@@ -3,7 +3,7 @@
     <img class="EmptyList__img"
       src="@/assets/rick-empty.png"
     />
-    <div class="EmptyList__bottom">
+    <div class="EmptyList__text">
       <h5 class="EmptyList__title">
         {{ title }}
       </h5>

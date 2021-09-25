@@ -68,7 +68,7 @@
           </el-button>
         </div>
       </div>
-      <el-pagination background layout="prev, pager, next" 
+      <ThePagination 
         :total="characters.length"
         :page-size="pageSize"
         @current-change="handleChangePage"
@@ -81,11 +81,14 @@
 import { defineComponent, computed, PropType, toRefs, Ref, ref, watch } from "vue";
 import { Character } from "./Character";
 import EmptyList from '../Common/EmptyList.vue';
+import ThePagination from "../Common/ThePagination.vue";
 
 export default defineComponent({
   name: "CharacterTable",
   components: {
     EmptyList,
+    ThePagination,
+    
   },
   props: {
     characters: {
@@ -159,6 +162,7 @@ export default defineComponent({
 }
 
 .CharacterTable__row {
+  height: 76px;
   border-bottom: 2px solid rgba(229, 234, 244, 0.25); 
 }
 .CharacterTable__header {
