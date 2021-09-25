@@ -52,7 +52,6 @@ export default defineComponent({
     const allCharacters = ref<Array<Character>>([])
 
     const handleAddToFavourites = ((characterId: number) => {
-     console.log('add');
      favouritesStore.addToFavourites(characterId);
       allCharacters.value.forEach(character => {
         character.getId() ===  characterId ?
