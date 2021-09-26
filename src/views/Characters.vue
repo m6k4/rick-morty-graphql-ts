@@ -5,7 +5,7 @@
         <SearchBar @search="handleSearch" />
       </template>
     </TheHeader>
-    <section class="CharactersView__container">
+    <section>
       <CharactersList :search-options="searchOptions" />
     </section>
   </div>
@@ -45,5 +45,8 @@ export default defineComponent({
 });
 </script>
 
-<style>
+<style scoped>
+.CharactersView {
+  margin: 0;
+}
 </style>
