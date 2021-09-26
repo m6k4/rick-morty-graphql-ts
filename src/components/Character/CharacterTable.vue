@@ -185,4 +185,24 @@ export default defineComponent({
   height: 68px;
   border-radius: 4px;
 }
+
+@media (max-height: 1000px) {
+  .CharacterTable__row {
+     height: 48px;
+  }
+  .CharacterTable__img {
+    height: 44px;
+  }
+
+  .CharacterTable__button {
+    width: 36px;
+    height: 36px;
+  }
+
+}
+@media (max-width: 1366px) {
+  .CharacterTable {
+    font-size: 12px
+  }
+}
 </style>

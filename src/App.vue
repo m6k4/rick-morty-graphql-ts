@@ -25,6 +25,10 @@ export default defineComponent({
   margin-top: 10px;
 }
 
+body {
+  overflow-y: hidden;
+}
+
 .AppView {
   width: 100%;
   height: 100%;

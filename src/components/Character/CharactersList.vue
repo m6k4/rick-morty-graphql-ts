@@ -149,9 +149,40 @@ export default defineComponent({
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
+<style>
 .CharacterList {
   height: 100vh;
 }
+
+.el-tabs__header {
+  padding: 28px 0;
+}
+
+@media (max-height: 1000px) {
+  .el-tabs__header {
+    padding: 12px 0;
+  }
+}
+
+.el-tabs__nav {
+  margin-left: 140px
+}
+
+.el-tabs__active-bar {
+  background-color: #11B0C8 !important;
+}
+
+.el-tabs__header {
+  background-color: #fff !important;
+}
+
+.el-tabs__item.is-active {
+  color: #11B0C8 !important;
+}
+
+.el-tabs__item:hover {
+  color: #11B0C8 !important;
+}
+
 
 </style>

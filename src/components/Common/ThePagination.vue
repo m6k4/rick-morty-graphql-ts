@@ -1,6 +1,7 @@
 <template>
   <div class="ThePagination">
     <el-pagination background layout="prev, pager, next" 
+      hide-on-single-page
       :total="total"
       :page-size="pageSize"
       @current-change="$emit('current-change', $event)"
@@ -32,6 +33,10 @@ export default defineComponent({
 .ThePagination {
   margin-left: 140px;
   margin-top: 40px;
+}
+
+.ThePagination .el-pagination {
+  padding: 0
 }
 
 .ThePagination .el-pagination.is-background .btn-next, .el-pagination.is-background .btn-prev, .el-pagination.is-background .el-pager li {
@@ -69,6 +74,23 @@ export default defineComponent({
 
 .ThePagination .el-pagination.is-background .el-pager li:not(.disabled).active {
   color: #fff
+}
+
+@media (max-height: 1000px) {
+  .ThePagination {
+    margin-top: 20px;
+  }
+}
+
+@media (max-width: 600px) {
+  .ThePagination .el-pagination.is-background .el-pager li {
+    display: none;
+  }
+
+  .ThePagination {
+    display: flex;
+    align-items: center;
+  }
 }
 
 </style>

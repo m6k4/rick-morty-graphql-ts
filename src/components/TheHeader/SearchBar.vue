@@ -17,8 +17,9 @@
     <span class="material-icons SearchBar__select__icon">
       arrow_drop_down
     </span>
-    <input
-      class="SearchBar__input"
+     
+    <input class="SearchBar__input"
+      v-on:keyup.enter="handleSearch"
       v-model="searchedValue"
     />
     <button 
