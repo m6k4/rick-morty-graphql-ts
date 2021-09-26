@@ -9,4 +9,4 @@ The project presents a list of characters downloaded from [graphql rick and mort
 App was created using Vue 3 with composition api, Typescript and Apollo library for handling graphql requests.
 
 
-![Alt text](/relative/path/to/img.jpg?raw=true "screen")
+![Alt text](/src/assets/screen.png "screen")
