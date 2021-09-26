@@ -198,7 +198,7 @@ export default defineComponent({
 @media (max-height: 1000px) {
 
   .CharacterTable__row {
-    height: 48px;
+    height: 60px;
   }
 
   .CharacterTable__img {
@@ -210,6 +210,11 @@ export default defineComponent({
     height: 36px;
   }
 
+}
+@media (max-height: 850px) {
+  .CharacterTable__row {
+    height: 48px;
+  }
 }
 
 @media (max-width: 1366px) {

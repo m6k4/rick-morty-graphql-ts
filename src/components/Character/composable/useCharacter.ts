@@ -33,7 +33,7 @@ export default function useCharacter() {
 
 
         charactersQuery.onResult(result => {
-            if (result.data.charactersByIds[0]) {
+            if (result.data?.charactersByIds[0]) {
                 allCharacters.value = [...result.data.charactersByIds.map(dto => Character.fromDTO(dto))];
                 filteredCharacterList.value = [...result.data.charactersByIds.map(dto => Character.fromDTO(dto))];
                 isLoading.value = false;
