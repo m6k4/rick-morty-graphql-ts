@@ -1,47 +1,14 @@
 <template>
-  <div class="AppView">
-    <TheHeader>
-      <template #header-content>
-        <SearchBar @search="handleSearch" />
-      </template>
-    </TheHeader>
-    <section class="AppView__container">
-      <CharactersList :search-options="searchOptions" />
-    </section>
+  <div id="app">
+    <router-view />
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, isRef, reactive } from 'vue';
-import SearchBar from './components/TheHeader/SearchBar.vue';
-import CharactersList from './components/Character/CharactersList.vue';
-import TheHeader from './components/Platform/TheHeader.vue';
+import { defineComponent } from 'vue';
 
 export default defineComponent({
   name: 'App',
-  components: {
-    SearchBar, 
-    CharactersList,
-    TheHeader
-  },
-  // called once automaticly when the component is created
-  setup() {
-    const searchOptions = reactive({
-      name: '',
-      value: ''
-    });
-
-    // const searchOptions = ref({});
-    const handleSearch = (filters) => {
-      searchOptions.name = filters.name;
-      searchOptions.value = filters.value;
-    };
-
-    return {
-      searchOptions,
-      handleSearch,
-    }
-  }
 });
 </script>
 
