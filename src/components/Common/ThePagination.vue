@@ -50,6 +50,10 @@ export default defineComponent({
   padding: 8px;
 }
 
+.ThePagination .el-pagination.is-background .el-pager .btn-quicknext, .el-pagination.is-background .el-pager .btn-quickprev {
+  padding-left: 12px;
+}
+
 .ThePagination .el-pagination .btn-next .el-icon:hover, .el-pagination .btn-prev .el-icon:hover {
   color: #11B0C8;
 }
@@ -67,15 +71,4 @@ export default defineComponent({
   color: #fff
 }
 
-/* .ThePagination .el-pagination.is-background .el-pager li:not(.disabled):hover {
-  color: #11B0C8;
-}
-
-.ThePaginatio.el-pagination.is-background .el-pager li:not(.disabled).active:hover {
-  color: #fff
-}
-
-.ThePagination .el-pagination.is-background .el-pager li.active: hover {
-  color: #fff
-} */
 </style>
