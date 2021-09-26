@@ -1,24 +1,12 @@
-# composition-api
+<h1 align="center">Rick & Morty task</h1>
 
-## Project setup
-```
-npm install
-```
+[Demo](https://6150eafd7c47c500070537b2--vigorous-lumiere-1f3167.netlify.app)
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
+## :dart: About project ##
 
-### Compiles and minifies for production
-```
-npm run build
-```
+The project presents a list of characters downloaded from [graphql rick and morty api](https://rickandmortyapi.com/graphql) with pagination, filters and the functionality of adding characters to the favourites list.
 
-### Run your unit tests
-```
-npm run test:unit
-```
+App was created using Vue 3 with composition api, Typescript and Apollo library for handling graphql requests.
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+
+![Alt text](/relative/path/to/img.jpg?raw=true "screen")
