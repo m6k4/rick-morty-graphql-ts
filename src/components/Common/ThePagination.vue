@@ -1,16 +1,16 @@
 <template>
   <div class="ThePagination">
-    <el-pagination background layout="prev, pager, next" 
-      hide-on-single-page
-      :total="total"
-      :page-size="pageSize"
-      @current-change="$emit('current-change', $event)"
-      />
+    <el-pagination background layout="prev, pager, next"
+                   hide-on-single-page
+                   :total="total"
+                   :page-size="pageSize"
+                   @current-change="$emit('current-change', $event)"
+    />
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, Ref } from "vue";
+import {defineComponent} from "vue";
 
 
 export default defineComponent({
@@ -76,6 +76,12 @@ export default defineComponent({
   color: #fff
 }
 
+@media (max-width: 1366px) {
+  .ThePagination {
+    margin-left: 20px;
+  }
+}
+
 @media (max-height: 1000px) {
   .ThePagination {
     margin-top: 20px;
@@ -88,6 +94,7 @@ export default defineComponent({
   }
 
   .ThePagination {
+    margin-left: 140px;
     display: flex;
     align-items: center;
   }

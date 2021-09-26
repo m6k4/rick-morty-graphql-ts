@@ -1,10 +1,10 @@
 <template>
   <div class="TheLoading">
     <div class="TheLoading__content">
-      <img 
-        class="TheLoading__content__img" 
-        src="@/assets/rick-head.png"
-      /> 
+      <img
+          class="TheLoading__content__img"
+          src="@/assets/rick-head.png"
+      />
       <label class="TheLoading__content__text">
         {{ text }}
       </label>
@@ -13,7 +13,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import {defineComponent} from "vue";
 
 
 export default defineComponent({
@@ -32,6 +32,7 @@ export default defineComponent({
 .TheLoading {
   height: 100%
 }
+
 .TheLoading__content {
   position: absolute;
   top: 50%;
@@ -57,11 +58,11 @@ export default defineComponent({
 }
 
 @keyframes spin {
-    from {
-        transform:rotate(0deg);
-    }
-    to {
-        transform:rotate(360deg);
-    }
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 </style>

@@ -1,7 +1,7 @@
 <template>
   <div class="CharacterTable">
-    <section v-if="!isLoading && characters.length === 0"> 
-      <EmptyList />
+    <section v-if="characters.length === 0">
+      <EmptyList/>
     </section>
     <section v-else>
       <header class="CharacterTable__header">
@@ -27,20 +27,22 @@
           Add To Favourites
         </div>
       </header>
-      <div class="CharacterTable__row" 
-        v-for="character in currentPageList"
-        :key="character.getId()"
+      <div class="CharacterTable__row"
+           v-for="character in currentPageList"
+           :key="character.getId()"
       >
         <div class="CharacterTable__column">
           <img class="CharacterTable__img"
-            :src="character.getImageUrl()"
+               :src="character.getImageUrl()"
           />
         </div>
         <div class="CharacterTable__column">
           {{ character.getId() }}
         </div>
         <div class="CharacterTable__column">
-          {{ character.getName() }}
+          <span class="CharacterTable__column--name">
+            {{ character.getName() }}
+          </span>
         </div>
         <div class="CharacterTable__column">
           {{ character.getGender() }}
@@ -52,15 +54,16 @@
           {{ character.getLatestEpisode().name }}
         </div>
         <div class="CharacterTable__column">
-          <el-button 
-            class="CharacterTable__button"
-            :class="[character.getIsFavourite()  
+          <el-button
+              class="CharacterTable__button"
+              :class="[character.getIsFavourite()
               ? 'CharacterTable__button--favourite' 
               : 'CharacterTable__button'
             ]"
-            @click="character.getIsFavourite() 
-            ? $emit('removeFromFavourites', character.getId())
-            : $emit('addToFavourites', character.getId())"
+              @click="$emit('setFavourite', {
+              character,
+              isFavourite: !character.getIsFavourite()
+            })"
           >
             <span class="material-icons">
               star_rate
@@ -68,18 +71,18 @@
           </el-button>
         </div>
       </div>
-      <ThePagination 
-        :total="characters.length"
-        :page-size="pageSize"
-        @current-change="handleChangePage"
+      <ThePagination
+          :total="characters.length"
+          :page-size="pageSize"
+          @current-change="handleChangePage"
       />
     </section>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, computed, PropType, toRefs, Ref, ref, watch } from "vue";
-import { Character } from "./Character";
+import {computed, defineComponent, PropType, Ref, ref, toRefs} from "vue";
+import {Character} from "./types/Character";
 import EmptyList from '../Common/EmptyList.vue';
 import ThePagination from "../Common/ThePagination.vue";
 
@@ -88,25 +91,21 @@ export default defineComponent({
   components: {
     EmptyList,
     ThePagination,
-    
+
   },
   props: {
     characters: {
       type: [] as PropType<Readonly<Character[]>>,
       default: []
-    },
-    isLoading: {
-      type: Boolean,
-      default: true
     }
   },
-  setup(props, context) {
+  setup(props) {
     const { characters } = toRefs<any>(props);
     const currentPage: Ref<number> = ref(1);
     const pageSize = 8;
 
-    const currentPageList = computed (() => {
-      if(characters.value && characters.value.length > 0) {
+    const currentPageList = computed(() => {
+      if (characters.value && characters.value.length > 0) {
         const firstIndex = (currentPage.value - 1) * pageSize;
         return characters.value.slice(firstIndex, firstIndex + pageSize);
       }
@@ -114,8 +113,8 @@ export default defineComponent({
 
     const handleChangePage = ((page) => {
       currentPage.value = page;
-    })
-    
+    });
+
     return {
       characters,
       pageSize,
@@ -131,6 +130,14 @@ export default defineComponent({
 .CharacterTable {
   margin: 0
 }
+
+.CharacterTable__column--name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 128px
+}
+
 .CharacterTable__button {
   width: 43px;
   height: 43px;
@@ -141,7 +148,8 @@ export default defineComponent({
   transition: all 0.5s;
   border-radius: 8px;
 }
-.CharacterTable__button span:nth-child(1){
+
+.CharacterTable__button span:nth-child(1) {
   color: #11B0C8;
   width: 24px;
   height: 24px;
@@ -151,7 +159,7 @@ export default defineComponent({
   background: #11B0C8
 }
 
-.CharacterTable__button--favourite span:nth-child(1){
+.CharacterTable__button--favourite span:nth-child(1) {
   color: #fff;
   width: 24px;
   height: 24px;
@@ -163,8 +171,9 @@ export default defineComponent({
 
 .CharacterTable__row {
   height: 76px;
-  border-bottom: 2px solid rgba(229, 234, 244, 0.25); 
+  border-bottom: 2px solid rgba(229, 234, 244, 0.25);
 }
+
 .CharacterTable__header {
   height: 54px;
   background: rgba(229, 234, 244, 0.25);
@@ -187,9 +196,11 @@ export default defineComponent({
 }
 
 @media (max-height: 1000px) {
+
   .CharacterTable__row {
-     height: 48px;
+    height: 48px;
   }
+
   .CharacterTable__img {
     height: 44px;
   }
@@ -200,9 +211,30 @@ export default defineComponent({
   }
 
 }
+
 @media (max-width: 1366px) {
   .CharacterTable {
     font-size: 12px
   }
+
+  .CharacterTable__column--name {
+    max-width: 72px
+  }
+
+  .CharacterTable__column:nth-child(1) {
+    margin-left: 20px
+  }
+
 }
+
+@media (max-width: 400px) {
+  .CharacterTable__column:nth-child(1) {
+    display: none;
+  }
+
+  .CharacterTable__column:nth-child(2) {
+    margin-left: 20px
+  }
+}
+
 </style>

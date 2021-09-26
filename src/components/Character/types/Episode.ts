@@ -1,4 +1,4 @@
-import { EpisodeDTO } from "@/graphql/DTO/EpisodeDTO";
+import {EpisodeDTO} from "@/types/types";
 
 export class Episode {
   constructor(private readonly name: string) {

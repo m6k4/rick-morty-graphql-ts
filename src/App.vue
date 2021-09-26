@@ -26,6 +26,7 @@ export default defineComponent({
 }
 
 body {
+  overflow-x: hidden;
   overflow-y: hidden;
 }
 

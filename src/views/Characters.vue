@@ -2,43 +2,43 @@
   <div class="CharactersView">
     <TheHeader>
       <template #header-content>
-        <SearchBar @search="handleSearch" />
+        <SearchBar @search="handleSearch"/>
       </template>
     </TheHeader>
     <section>
-      <CharactersList :search-options="searchOptions" />
+      <CharactersList :filter-option="filterOption"/>
     </section>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive } from 'vue';
-import SearchBar from '../components/TheHeader/SearchBar.vue';
+import {defineComponent, reactive} from 'vue';
+import SearchBar from '../components/Header/SearchBar.vue';
 import CharactersList from '../components/Character/CharactersList.vue';
-import TheHeader from '../components/Platform/TheHeader.vue';
+import TheHeader from '../components/Header/TheHeader.vue';
+import {FilterOption} from "@/types/types";
 
 export default defineComponent({
   name: 'Characters',
   components: {
-    SearchBar, 
+    SearchBar,
     CharactersList,
     TheHeader
   },
-  
-  // called once automaticly when the component is created
+
   setup() {
-    const searchOptions = reactive({
-      name: '',
-      value: ''
+    const filterOption = reactive<FilterOption>({
+      type: null,
+      value: null
     });
 
-    const handleSearch = (filters) => {
-      searchOptions.name = filters.name;
-      searchOptions.value = filters.value;
+    const handleSearch = (filters: FilterOption) => {
+      filterOption.type = filters.type;
+      filterOption.value = filters.value;
     };
 
     return {
-      searchOptions,
+      filterOption,
       handleSearch,
     }
   }

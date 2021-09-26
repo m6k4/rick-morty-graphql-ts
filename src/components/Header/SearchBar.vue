@@ -3,28 +3,28 @@
     <label class="SearchBar__label">
       Search by
     </label>
-    <select 
-      class="SearchBar__select"
-      v-model="searchedType"
+    <select
+        class="SearchBar__select"
+        v-model="searchedType"
     >
-      <option class="SearchBar__select__option" 
-        v-for="filter in filterTypes" 
-        :key="filter.type"
+      <option class="SearchBar__select__option"
+              v-for="filter in filterTypes"
+              :key="filter.type"
       >
-      {{filter.label}}
+        {{ filter.type }}
       </option>
     </select>
     <span class="material-icons SearchBar__select__icon">
       arrow_drop_down
     </span>
-     
+
     <input class="SearchBar__input"
-      v-on:keyup.enter="handleSearch"
-      v-model="searchedValue"
+           v-on:keyup.enter="handleSearch"
+           v-model="searchedValue"
     />
-    <button 
-      class="SearchBar__button"
-      @click="handleSearch"
+    <button
+        class="SearchBar__button"
+        @click="handleSearch"
     >
       <span class="material-icons SearchBar__button__icon">
         search
@@ -34,40 +34,34 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue';
+import {Filter, FilterType} from '@/types/types';
+import {defineComponent, ref} from 'vue';
 
 export default defineComponent({
   name: 'SearchBar',
-  // called once automaticly when the component is created
   setup(props, context) {
 
-    const filterTypes = [ 
+    const filterTypes: Array<Filter> = [
       {
-        'name': 'name',
-        'label': 'name',
-        'type': 'character'
+        type: FilterType.NAME,
       },
-       {
-        'name': 'id',
-        'label': 'identifier',
-        'type': 'id'
+      {
+        type: FilterType.ID,
       },
-       {
-        'name': 'episode',
-        'label': 'episode',
-        'type': 'episode'
+      {
+        type: FilterType.EPISODE,
       }
     ]
     const searchedType = ref<string>('name');
     const searchedValue = ref<string>('');
 
     const handleSearch = () => {
-        context.emit('search', {
-          name: searchedType.value,
-          value: searchedValue.value,
-        })
+      context.emit('search', {
+        type: searchedType.value,
+        value: searchedValue.value,
+      })
     }
-    
+
     return {
       filterTypes,
       searchedType,
@@ -131,7 +125,29 @@ export default defineComponent({
 
 .SearchBar__select, .SearchBar__input, .SearchBar__button, .SearchBar__select__option {
   all: unset;
-};
+}
 
+@media (max-width: 900px) {
+  .SearchBar {
+    width: 460px;
+  }
+}
+
+@media (max-width: 768px) {
+  .TheHeader__img {
+    width: 400px;
+  }
+}
+
+@media (max-width: 400px) {
+  .SearchBar__label {
+    display: none
+  }
+
+  .SearchBar__select__icon {
+    display: none
+  }
+
+}
 
 </style>

@@ -1,42 +1,32 @@
 <template>
   <div class="CharactersList">
-    <TheLoading v-if="loadingAll"/>
-    <section 
-      v-else
-      class="CharactersList__content" 
+    <TheLoading v-if="isLoading"/>
+    <section
+        v-else
+        class="CharactersList__content"
     >
-      <el-tabs v-model="activeName">
+      <el-tabs v-model="activeTabName">
         <el-tab-pane label="All characters" name="all">
-          <CharacterTable :characters="filteredList"
-            :isLoading="loadingAll"
-            @add-to-favourites="handleAddToFavourites"
-            @remove-from-favourites="handleRemoveFromFavourites"
+          <CharacterTable :characters="filteredCharacterList"
+                          @set-favourite="setFavourite"
           />
         </el-tab-pane>
         <el-tab-pane label="Favourites" name="favourites">
-          <CharacterTable :characters="favouritesList"
-            :isLoading="loadingAll"
-            @remove-from-favourites="handleRemoveFromFavourites"
+          <CharacterTable :characters="favouriteCharacterList"
+                          @set-favourite="setFavourite"
           />
         </el-tab-pane>
-      </el-tabs> 
+      </el-tabs>
     </section>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, toRefs, ref, computed, ComputedRef } from "vue";
-import { useQuery, useResult } from "@vue/apollo-composable";
-import { GET_CHARACTERS_BY_IDS_QUERY, GET_INFO_QUERY } from "../../graphql/getCharacters";
-import { Filter } from '../../types/types';
-import { GetCharactersByIdsResponseDTO } from '../../graphql/DTO/GetCharactersByIdsResponseDTO';
-import { Character } from "./Character";
-import { Info } from "./Info";
-import { GetInfoResponseDTO } from "@/graphql/DTO/GetInfoResponseDTO";
+import {defineComponent, PropType, ref, watch} from "vue";
 import CharacterTable from './CharacterTable.vue';
-import { Episode } from "./Episode";
-import { favouritesStore } from './state/favouritesState';
 import TheLoading from '../Common/TheLoading.vue';
+import {FilterOption} from "@/types/types";
+import useCharacter from "@/components/Character/composable/useCharacter";
 
 export default defineComponent({
   name: "CharactersList",
@@ -45,104 +35,43 @@ export default defineComponent({
     TheLoading
   },
   props: {
-    searchOptions: {
-      type: Object,
-      default: {}
+    filterOption: {
+      type: Object as PropType<FilterOption>,
+      default: {
+        type: null,
+        value: null
+      }
     }
   },
   setup(props) {
-    const activeName = ref('all');
-    const { searchOptions } = toRefs(props)
-    const loadingAll = ref(true);
-    const allCharacters = ref<Array<Character>>([])
+    const activeTabName = ref<string>('all');
 
-    const handleAddToFavourites = ((characterId: number) => {
-     favouritesStore.addToFavourites(characterId);
-      allCharacters.value.forEach(character => {
-        character.getId() ===  characterId ?
-          character.setIsFavourite(true) : ''
-       })
-    })
+    const {
+      filteredCharacterList,
+      isError,
+      isLoading,
+      favouriteCharacterList,
+      setFavourite,
+      fetch,
+      filter
+    } = useCharacter();
 
-    const handleRemoveFromFavourites =  ((characterId: number) => {
-      favouritesStore.removeFromFavourites(characterId);
-      allCharacters.value.forEach(character => {
-      character.getId() ===  characterId ?
-        character.setIsFavourite(false) : ''
-      })
-    })
+    fetch();
 
-    const favouritesList = computed (() => {
-      return filteredList.value.filter(character => character.getIsFavourite())
-    })
+    watch(props, () => {
+      const filterOptions: FilterOption = (props as { filterOption: FilterOption }).filterOption;
+      filter(filterOptions);
+    });
 
-    const filteredList: ComputedRef<{ getId: () => number; getName: () => string; getGender: () => string; getSpecies: () => string; getImageUrl: () => string; getEpisode: () => Episode[]; getLatestEpisode: () => Episode; getIsFavourite: () => boolean; setIsFavourite: (status: boolean) => void; }[]> = computed (() => {
-      if(!searchOptions.value.value) return allCharacters.value;
-      if(allCharacters.value.length > 0 ) {
-        if(searchOptions.value.name === 'name') {
-          return allCharacters.value.filter((character) => 
-            character.getName().toUpperCase().includes(searchOptions.value.value.toUpperCase()) 
-          )
-        }
-        if(searchOptions.value.name === 'identifier') {
-          return allCharacters.value.filter((character) =>
-            character.getId() === searchOptions.value.value
-          )
-        }
-        if(searchOptions.value.name === 'episode') {
-            return allCharacters.value.filter((character) =>
-            character.getEpisode().some((epidose) =>
-              epidose.getName() === searchOptions.value.value.toUpperCase())
-          )
-        }
-        return allCharacters.value;
-      }
-    })
-
-    // INFO
-    const { result: infoResult, onResult: infoOnResult } = useQuery<GetInfoResponseDTO>(GET_INFO_QUERY);
-
-    const info = useResult(
-      infoResult,
-      [],
-      data => Info.fromDTO(data?.characters?.info)
-    );
-
-    infoOnResult(infoResult => {
-      loadingAll.value = true
-      let { count }: any = info.value;
-      const arrayOfAllIds: number[] = Array.from(Array(count+1).keys()).slice(1)
-      refetch({
-        ids: arrayOfAllIds,
-      }).then(() => {
-        loadingAll.value = false
-      }
-      )
-    })
-  
-    // ALL CHARACTERS BY ID
-    const { result, error, onResult, networkStatus, refetch } = useQuery<GetCharactersByIdsResponseDTO>(GET_CHARACTERS_BY_IDS_QUERY, {
-      ids: [],
-    })
-    
-    useResult(
-      result,
-      [],
-      data => data?.charactersByIds.map(dto => Character.fromDTO(dto))
-    );
-
-    onResult(result => {
-      allCharacters.value = result.data?.charactersByIds.map(dto => Character.fromDTO(dto))
-    })
-    
     return {
-      favouritesList,
-      filteredList,
-      loadingAll,
-      error,
-      activeName,
-      handleAddToFavourites,
-      handleRemoveFromFavourites
+      filteredCharacterList,
+      favouriteCharacterList,
+      isError,
+      isLoading,
+      setFavourite,
+      fetch,
+      filter,
+      activeTabName
     };
   }
 });
@@ -184,5 +113,11 @@ export default defineComponent({
   color: #11B0C8 !important;
 }
 
+
+@media (max-width: 1366px) {
+  .el-tabs__nav{
+    margin-left: 20px
+  }
+}
 
 </style>

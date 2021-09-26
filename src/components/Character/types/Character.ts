@@ -1,15 +1,17 @@
-import { CharacterDTO } from "@/graphql/DTO/CharacterDTO";
 import { Episode } from "./Episode";
+import {CharacterDTO} from "@/types/types";
 
 export class Character {
+
+  private isFavourite = false;
+
   constructor(
     private readonly id: number,
     private readonly name: string,
     private readonly gender: string,
     private readonly species: string,
     private readonly imageUrl: string,
-    private readonly episodes: Array<Episode>,
-    private isFavourite: boolean = false,
+    private readonly episodes: Array<Episode>
   ) {}
 
   static fromDTO(dto: CharacterDTO): Character {
@@ -26,28 +28,37 @@ export class Character {
   getId(): number {
     return this.id;
   }
+
   getName(): string {
     return this.name;
   }
+
   getGender(): string {
     return this.gender;
   }
+
   getSpecies(): string {
     return this.species;
   }
+
   getImageUrl(): string {
     return this.imageUrl;
   }
-  getEpisode(): Array<Episode> {
+
+  getEpisodes(): Array<Episode> {
     return this.episodes
   }
+
   getLatestEpisode(): Episode {
     return this.episodes[this.episodes.length - 1];
   }
+
   getIsFavourite(): boolean {
     return this.isFavourite;
   }
+
   setIsFavourite(status: boolean): void {
     this.isFavourite = status;
   }
+
 }

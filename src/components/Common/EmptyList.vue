@@ -1,7 +1,7 @@
 <template>
   <div class="EmptyList">
     <img class="EmptyList__img"
-      src="@/assets/rick-empty.png"
+         src="@/assets/rick-empty.png"
     />
     <div class="EmptyList__text">
       <h5 class="EmptyList__title">
@@ -13,7 +13,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import {defineComponent} from "vue";
 
 
 export default defineComponent({
@@ -52,6 +52,7 @@ export default defineComponent({
   font-size: 37px;
   margin-top: 5px;
 }
+
 .EmptyList__description {
   font-size: 16px;
   font-weight: 300;
