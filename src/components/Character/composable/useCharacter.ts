@@ -27,7 +27,7 @@ export default function useCharacter() {
 
         infoQuery.onResult(result => {
             const info: Info = Info.fromDTO(result.data.characters.info);
-            const ids = Array.from(Array(info.getCount() + 1).keys()).slice(1);
+            const ids: Array<number> = Array.from(Array(info.getCount() + 1).keys()).slice(1);
             charactersQuery.refetch({ids});
         })
 
