@@ -82,7 +82,7 @@ export default defineComponent({
   }
 }
 
-@media (max-height: 1000px) {
+@media (max-height: 850px) {
   .ThePagination {
     margin-top: 20px;
   }
