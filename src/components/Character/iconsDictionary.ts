@@ -15,7 +15,7 @@ const iconDictionary: Array<GenderIcon> = [
   },
   {
     name: GenderType.UNKNOWN,
-    icon: 'minus'
+    icon: 'remove'
   },
 ]
  export default iconDictionary;
