@@ -7,6 +7,17 @@ export enum FilterType {
     EPISODE = 'episode'
 }
 
+export enum GenderType {
+    FEMALE = 'Female',
+    MALE = 'Male',
+    GENDERLESS = 'Genderless',
+    UNKNOWN = 'unknown'
+}
+
+export interface GenderIcon { 
+    name: GenderType,
+    icon: string
+};
 export interface Filter { 
     type: FilterType 
 };

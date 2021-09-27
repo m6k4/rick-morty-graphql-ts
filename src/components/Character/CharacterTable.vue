@@ -48,7 +48,7 @@
         </div>
         <div class="CharacterTable__column">
           <span class="material-icons">
-            {{ iconsDictionary[character.getGender()].icon }}
+            {{ iconsDictionary.filter(icon => icon.name === character.getGender())[0].icon }}
           </span>
           {{ character.getGender() }}
         </div>

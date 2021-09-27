@@ -1,14 +1,21 @@
-export default {
-  Female: {
-    icon: 'female',
+import {GenderType, GenderIcon} from '@/types/types';
+
+const iconDictionary: Array<GenderIcon> = [
+  {
+    name: GenderType.FEMALE,
+    icon: 'female'
   },
-  Male: {
-    icon: 'male',
+  {
+    name: GenderType.MALE,
+    icon: 'male'
   },
-  Genderless: {
-    icon: 'close',
+  {
+    name: GenderType.GENDERLESS,
+    icon: 'close'
   },
-  unknown: {
-    icon: 'remove',
+  {
+    name: GenderType.UNKNOWN,
+    icon: 'minus'
   },
-}
+]
+ export default iconDictionary;
