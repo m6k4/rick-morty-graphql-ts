@@ -1,6 +1,6 @@
 <h1 align="center">Rick & Morty task</h1>
 
-[Demo](https://6150eafd7c47c500070537b2--vigorous-lumiere-1f3167.netlify.app)
+[Demo](https://615183117c47c5000711095d--vigorous-lumiere-1f3167.netlify.app)
 
 ## :dart: About project ##
 
