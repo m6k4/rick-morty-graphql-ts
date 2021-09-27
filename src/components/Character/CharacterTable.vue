@@ -26,7 +26,7 @@
         <div class="CharacterTable__column">
           Add To Favourites
         </div>
-      </header>
+      </header> 
       <div class="CharacterTable__row"
            v-for="character in currentPageList"
            :key="character.getId()"
@@ -47,6 +47,9 @@
           </span>
         </div>
         <div class="CharacterTable__column">
+          <span class="material-icons">
+            {{ iconsDictionary[character.getGender()].icon }}
+          </span>
           {{ character.getGender() }}
         </div>
         <div class="CharacterTable__column">
@@ -87,13 +90,13 @@ import {computed, defineComponent, PropType, Ref, ref, toRefs} from "vue";
 import {Character} from "./types/Character";
 import EmptyList from '../Common/EmptyList.vue';
 import ThePagination from "../Common/ThePagination.vue";
+import iconsDictionary from "./iconsDictionary";
 
 export default defineComponent({
   name: "CharacterTable",
   components: {
     EmptyList,
     ThePagination,
-
   },
   props: {
     characters: {
@@ -120,6 +123,7 @@ export default defineComponent({
     return {
       characters,
       pageSize,
+      iconsDictionary,
       currentPageList,
       handleChangePage
     };

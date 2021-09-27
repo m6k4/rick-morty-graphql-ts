@@ -7,9 +7,14 @@ export enum FilterType {
     EPISODE = 'episode'
 }
 
-export type Filter = { type: FilterType };
+export interface Filter { 
+    type: FilterType 
+};
 
-export type FilterOption = { type: FilterType, value: string };
+export interface FilterOption { 
+    type: FilterType, 
+    value: string 
+};
 
 export interface FavouriteOption {
     character: Character,
