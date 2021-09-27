@@ -10,6 +10,7 @@ export class Character {
     private readonly name: string,
     private readonly gender: string,
     private readonly species: string,
+    private readonly status: string,
     private readonly imageUrl: string,
     private readonly episodes: Array<Episode>
   ) {}
@@ -20,6 +21,7 @@ export class Character {
       dto.name,
       dto.gender,
       dto.species,
+      dto.status,
       dto.image,
       dto.episode.map(episode => Episode.fromDTO(episode))
     )
@@ -39,6 +41,10 @@ export class Character {
 
   getSpecies(): string {
     return this.species;
+  }
+
+  getStatus(): string {
+    return this.status;
   }
 
   getImageUrl(): string {

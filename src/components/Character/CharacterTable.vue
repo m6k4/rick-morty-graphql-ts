@@ -33,7 +33,9 @@
       >
         <div class="CharacterTable__column">
           <img class="CharacterTable__img"
-               :src="character.getImageUrl()"
+              :class="{'CharacterTable__img--bw' :
+                character.getStatus() === 'Dead' }"
+              :src="character.getImageUrl()"
           />
         </div>
         <div class="CharacterTable__column">
@@ -193,6 +195,10 @@ export default defineComponent({
 .CharacterTable__img {
   height: 68px;
   border-radius: 4px;
+}
+
+.CharacterTable__img--bw {
+  filter: grayscale(100%);
 }
 
 @media (max-height: 1000px) {
